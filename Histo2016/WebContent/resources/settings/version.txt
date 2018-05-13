@@ -1,3 +1,8 @@
+[{"printer":"10.250.3.227","tuerschild":"10.250.0.101","ip":"10.250.0.252","bemerkung":"Amulanz\/EG W2-U01 (Fenster)   aktuell:   18:03:73:1E:85:AD     AUG-11961 ","roomid":361,"aktiv":"A","aufrufwartekreis":"AUG-EG-W-2","laufrichtung":"L","zeitpunkt":"2015-05-18 07:31:01","aufruftext":"U1"}]
+http://10.210.21.11:3009/DB/PLS/ip2room/ip/10.250.0.252
+
+ 
+
 -> less https://github.com/palantir/eclipse-less
 --> your-project/.settings/com.palantir.less.prefs
 --> srcFiles=WebContent/resources/style/style.less;WebContent/resources/style/specificStyle.less;WebContent/resources/style/common.less

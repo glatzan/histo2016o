@@ -14,15 +14,12 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
+
+@Service("pDFService")
 @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-@Service
-@Getter
-@Setter
 public class PDFServiceImpl extends AbstractService implements PDFService {
 
 	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
 	private PDFDao pDFDao;
 
 	public void attachPDF(HasDataList dataList, PDFContainer pdfContainer) {

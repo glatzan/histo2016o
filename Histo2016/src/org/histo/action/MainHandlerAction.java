@@ -25,11 +25,13 @@ import org.histo.config.exception.CustomUserNotificationExcepetion;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
+import org.histo.service.dao.PatientDao;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.documents.SlideLable;
 import org.histo.util.TimeUtil;
 import org.primefaces.PrimeFaces;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -56,6 +58,12 @@ public class MainHandlerAction {
 
 	@Autowired
 	protected ResourceBundle resourceBundle;
+
+	@Autowired
+	private MessageSource messageSource;
+	
+	@Autowired
+	private PatientDao patientDao;
 
 	/********************************************************
 	 * Navigation
@@ -231,6 +239,6 @@ public class MainHandlerAction {
 	}
 	
 	public void test() {
-		System.out.println(this);
+		System.out.println( resourceBundle.hashCode() + "---" + messageSource.hashCode() + " " + patientDao.hashCode());
 	}
 }

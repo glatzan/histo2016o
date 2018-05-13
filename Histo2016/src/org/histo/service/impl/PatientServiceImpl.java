@@ -31,48 +31,35 @@ import lombok.Setter;
  * @author andi
  *
  */
+@Service("patientService")
 @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-@Service
-@Getter
-@Setter
 public class PatientServiceImpl extends AbstractService implements PatientService {
 
 	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
 	private GlobalSettings globalSettings;
 
 	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
 	private PatientDao patientDao;
 
-	/**
-	 * Adding a patient to the database, if not new save patient will be saved as
-	 * well. Compares and updates patient data with the clinic backed.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param patient
-	 * @param update
-	 * @throws JSONException
-	 * @throws CustomExceptionToManyEntries
-	 * @throws CustomNullPatientExcepetion
+	 * @see org.histo.service.PatientService#addPatient(org.histo.model.patient.
+	 * Patient)
 	 */
+	@Override
 	public void addPatient(Patient patient)
 			throws JSONException, CustomExceptionToManyEntries, CustomNullPatientExcepetion {
 		addPatient(patient, true);
 	}
 
-	/**
-	 * Adding a patient to the database, if not new save patient will be saved as
-	 * well. While update is true a data comparison with the pdv will be
-	 * initialized.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param patient
-	 * @param update
-	 * @throws JSONException
-	 * @throws CustomExceptionToManyEntries
-	 * @throws CustomNullPatientExcepetion
+	 * @see org.histo.service.PatientService#addPatient(org.histo.model.patient.
+	 * Patient, boolean)
 	 */
+	@Override
 	public void addPatient(Patient patient, boolean update)
 			throws JSONException, CustomExceptionToManyEntries, CustomNullPatientExcepetion {
 
@@ -100,22 +87,26 @@ public class PatientServiceImpl extends AbstractService implements PatientServic
 		}
 	}
 
-	/**
-	 * Removes a patient without tasks from local database. TODO: Remove logs
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param patient
+	 * @see org.histo.service.PatientService#removePatient(org.histo.model.patient.
+	 * Patient)
 	 */
+	@Override
 	public void removePatient(Patient patient) {
 		if (patient.getTasks().isEmpty()) {
 			patientDao.deletePatientData(patient, "log.patient.remove", patient);
 		}
 	}
 
-	/**
-	 * Archives a patient without tasks from local database
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param patient
+	 * @see org.histo.service.PatientService#archivePatient(org.histo.model.patient.
+	 * Patient)
 	 */
+	@Override
 	public void archivePatient(Patient patient) {
 		if (patient.getTasks().isEmpty()) {
 			patient.setArchived(true);
@@ -123,24 +114,24 @@ public class PatientServiceImpl extends AbstractService implements PatientServic
 		}
 	}
 
-	/**
-	 * Merges two patients. Copies all tasks from one patient to the other.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param from
-	 * @param to
+	 * @see org.histo.service.PatientService#mergePatient(org.histo.model.patient.
+	 * Patient, org.histo.model.patient.Patient)
 	 */
+	@Override
 	public void mergePatient(Patient from, Patient to) {
 		mergePatient(from, to, null);
 	}
 
-	/**
-	 * Merges two patients. Copies all tasks from one patient to the other. Taks a
-	 * lists of tasks to merge.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param from
-	 * @param to
-	 * @param tasksToMerge
+	 * @see org.histo.service.PatientService#mergePatient(org.histo.model.patient.
+	 * Patient, org.histo.model.patient.Patient, java.util.List)
 	 */
+	@Override
 	public void mergePatient(Patient from, Patient to, List<Task> tasksToMerge) {
 		List<Task> tasksFrom = tasksToMerge == null ? from.getTasks() : tasksToMerge;
 
@@ -155,19 +146,13 @@ public class PatientServiceImpl extends AbstractService implements PatientServic
 		from.setTasks(new ArrayList<Task>());
 	}
 
-	/**
-	 * Returns a Patient by the given piz. If localDatabaseOnly is true no pdv
-	 * patient will be displayed. (Notice that data of local patient will be synced
-	 * with pdv nevertheless.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param piz
-	 * @param localDatabaseOnly
-	 * @return
-	 * @throws HistoDatabaseInconsistentVersionException
-	 * @throws CustomNullPatientExcepetion
-	 * @throws CustomExceptionToManyEntries
-	 * @throws JSONException
+	 * @see org.histo.service.PatientService#findPatientByPiz(java.lang.String,
+	 * boolean)
 	 */
+	@Override
 	public Patient findPatientByPiz(String piz, boolean localDatabaseOnly)
 			throws HistoDatabaseInconsistentVersionException, JSONException, CustomExceptionToManyEntries,
 			CustomNullPatientExcepetion {
@@ -198,19 +183,13 @@ public class PatientServiceImpl extends AbstractService implements PatientServic
 		return null;
 	}
 
-	/**
-	 * Searches for a range of not completed pizes 6 to 8 digits, searches only in
-	 * histo database, pdv database does not support this. Updates found patients
-	 * from pdv database.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param piz
-	 * @return
-	 * @throws JSONException
-	 * @throws CustomExceptionToManyEntries
-	 * @throws CustomNullPatientExcepetion
-	 * @throws HistoDatabaseInconsistentVersionException
+	 * @see org.histo.service.PatientService#findPatientListByPiz(java.lang.String)
 	 */
-	public List<Patient> findPatientListByPiz(String piz) throws JSONException, CustomExceptionToManyEntries,
+	@Override
+	public List<Patient> listByPiz(String piz) throws JSONException, CustomExceptionToManyEntries,
 			CustomNullPatientExcepetion, HistoDatabaseInconsistentVersionException {
 
 		List<Patient> patients = patientDao.findListByPiz(piz);
@@ -229,39 +208,27 @@ public class PatientServiceImpl extends AbstractService implements PatientServic
 		return patients;
 	}
 
-	/**
-	 * Searches for patients in local and clinic database. Does not auto update all
-	 * local patient, does save changes if both clinic patien and local patient was
-	 * found
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param name
-	 * @param surname
-	 * @param birthday
-	 * @param localDatabaseOnly
-	 * @return
-	 * @throws HistoDatabaseInconsistentVersionException
-	 * @throws CustomNullPatientExcepetion
+	 * @see org.histo.service.PatientService#findPatient(java.lang.String,
+	 * java.lang.String, java.util.Date, boolean)
 	 */
-	public List<Patient> findPatient(String name, String surname, Date birthday, boolean localDatabaseOnly)
+	@Override
+	public List<Patient> list(String name, String surname, Date birthday, boolean localDatabaseOnly)
 			throws HistoDatabaseInconsistentVersionException, CustomNullPatientExcepetion {
-		return findPatient(name, surname, birthday, localDatabaseOnly, new AtomicBoolean(false));
+		return list(name, surname, birthday, localDatabaseOnly, new AtomicBoolean(false));
 	}
 
-	/**
-	 * Searches for patients in local and clinic database. Does not auto update all
-	 * local patient, does save changes if both clinic patien and local patient was
-	 * found
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param name
-	 * @param surname
-	 * @param birthday
-	 * @param localDatabaseOnly
-	 * @param toManyEntriesInClinicDatabase
-	 * @return
-	 * @throws CustomNullPatientExcepetion
-	 * @throws HistoDatabaseInconsistentVersionException
+	 * @see org.histo.service.PatientService#findPatient(java.lang.String,
+	 * java.lang.String, java.util.Date, boolean,
+	 * java.util.concurrent.atomic.AtomicBoolean)
 	 */
-	public List<Patient> findPatient(String name, String surname, Date birthday, boolean localDatabaseOnly,
+	@Override
+	public List<Patient> list(String name, String surname, Date birthday, boolean localDatabaseOnly,
 			AtomicBoolean toManyEntriesInClinicDatabase)
 			throws CustomNullPatientExcepetion, HistoDatabaseInconsistentVersionException {
 

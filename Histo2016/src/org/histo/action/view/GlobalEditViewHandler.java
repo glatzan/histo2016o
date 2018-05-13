@@ -25,7 +25,6 @@ import org.histo.config.exception.CustomExceptionToManyEntries;
 import org.histo.config.exception.CustomNullPatientExcepetion;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
-import org.histo.dao.PhysicianDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.DiagnosisPreset;
@@ -39,6 +38,7 @@ import org.histo.model.patient.Task;
 import org.histo.model.user.HistoPermissions;
 import org.histo.service.PatientService;
 import org.histo.service.dao.PatientDao;
+import org.histo.service.dao.PhysicianDao;
 import org.histo.service.dao.impl.PatientDaoImpl;
 import org.histo.ui.menu.MenuGenerator;
 import org.histo.ui.transformer.DefaultTransformer;
@@ -120,7 +120,7 @@ public class GlobalEditViewHandler {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private PhysicianDAO physicianDAO;
+	private PhysicianDao physicianDao;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -283,7 +283,7 @@ public class GlobalEditViewHandler {
 
 		setDiagnosisPresets(utilDAO.getAllDiagnosisPrototypes());
 
-		setPhysiciansToSignList(physicianDAO.getPhysicians(ContactRole.SIGNATURE, false));
+		setPhysiciansToSignList(physicianDao.list(ContactRole.SIGNATURE, false));
 		setPhysiciansToSignListTransformer(new DefaultTransformer<Physician>(getPhysiciansToSignList()));
 
 		setMaterialList(utilDAO.getAllMaterialPresets(true));

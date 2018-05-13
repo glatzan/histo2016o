@@ -21,6 +21,7 @@ import org.histo.model.Physician;
 import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Task;
+import org.histo.service.dao.PhysicianDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -32,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ContactDAO extends AbstractDAO {
 
 	@Autowired
-	private PhysicianDAO physicianDAO;
+	private PhysicianDao physicianDao;
 
 	@Autowired
 	private GenericDAO genericDAO;
@@ -282,7 +283,7 @@ public class ContactDAO extends AbstractDAO {
 	 * @return
 	 */
 	public ContactRole[] getDefaultAssociatedRoleForPhysician(Person person, ContactRole[] showOnlyRolesIfAvailable) {
-		Physician result = physicianDAO.getPhysicianByPerson(person);
+		Physician result = physicianDao.find(person);
 
 		if (result == null)
 			return new ContactRole[] { ContactRole.NONE };

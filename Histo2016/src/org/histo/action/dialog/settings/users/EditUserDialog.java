@@ -12,13 +12,15 @@ import org.histo.config.enums.Dialog;
 import org.histo.config.exception.HistoDatabaseConstraintViolationException;
 import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.LogDAO;
-import org.histo.dao.OrganizationDAO;
-import org.histo.dao.UserDAO;
 import org.histo.model.Organization;
 import org.histo.model.Person;
 import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoUser;
 import org.histo.service.PhysicianService;
+import org.histo.service.UserService;
+import org.histo.service.dao.GroupDao;
+import org.histo.service.dao.OrganizationDao;
+import org.histo.service.dao.UserDao;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +44,18 @@ public class EditUserDialog extends AbstractDialog implements OrganizationFuncti
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private UserDAO userDAO;
+	private UserDao userDao;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private UserService userService;
+	
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private GroupDao groupDao;
+	
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
@@ -67,7 +79,7 @@ public class EditUserDialog extends AbstractDialog implements OrganizationFuncti
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private OrganizationDAO organizationDAO;
+	private OrganizationDao organizationDao;
 
 	private HistoUser user;
 
@@ -95,7 +107,7 @@ public class EditUserDialog extends AbstractDialog implements OrganizationFuncti
 
 		setSaveAble(false);
 
-		setGroups(userDAO.getGroups(false));
+		setGroups(groupDao.list(true));
 		setGroupTransformer(new DefaultTransformer<HistoGroup>(getGroups()));
 
 		// setting organization transformer for selecting default address
@@ -138,7 +150,7 @@ public class EditUserDialog extends AbstractDialog implements OrganizationFuncti
 	 */
 	public void updateDataFromLdap() {
 		try {
-			physicianService.updatePhysicianDataFromLdap(user.getPhysician());
+			physicianService.ldapUpdate(user.getPhysician());
 		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
@@ -169,7 +181,7 @@ public class EditUserDialog extends AbstractDialog implements OrganizationFuncti
 	 */
 	public void deleteUser() {
 		try {
-			userDAO.deleteUser(user);
+			userDao.remove(user);
 			hideDialog(true);
 		} catch (HistoDatabaseConstraintViolationException e) {
 			logger.debug("Delete not possible, change group dialog");
@@ -181,7 +193,7 @@ public class EditUserDialog extends AbstractDialog implements OrganizationFuncti
 	 * Disables the user via group
 	 */
 	public void disableUser() {
-		HistoGroup group = userDAO.getHistoGroup(HistoGroup.GROUP_DISABLED, true);
+		HistoGroup group = groupDao.find(HistoGroup.GROUP_DISABLED, true);
 		user.setGroup(group);
 		onChangeUserGroup();
 	}

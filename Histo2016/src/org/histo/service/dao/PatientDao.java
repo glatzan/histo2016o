@@ -22,9 +22,9 @@ public interface PatientDao extends GenericDao<Patient, Long> {
 
 	public Patient find(Long id, boolean loadTasks, boolean loadFiles);
 
-	public List<Patient> findList(List<Long> ids);
+	public List<Patient> list(List<Long> ids);
 
-	public List<Patient> findList(List<Long> ids, boolean loadTasks, boolean loadFiles, boolean irgnoreArchived);
+	public List<Patient> list(List<Long> ids, boolean loadTasks, boolean loadFiles, boolean irgnoreArchived);
 
 	public Patient findByPiz(String piz);
 

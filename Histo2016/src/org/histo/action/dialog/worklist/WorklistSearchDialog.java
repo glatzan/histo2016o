@@ -12,7 +12,6 @@ import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.dao.FavouriteListDAO;
-import org.histo.dao.PhysicianDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.DiagnosisPreset;
@@ -23,6 +22,7 @@ import org.histo.model.StainingPrototype;
 import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
+import org.histo.service.dao.PhysicianDao;
 import org.histo.ui.FavouriteListContainer;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.worklist.Worklist;
@@ -52,7 +52,7 @@ public class WorklistSearchDialog extends AbstractTabDialog {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private PhysicianDAO physicianDAO;
+	private PhysicianDao physicianDao;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -235,7 +235,7 @@ public class WorklistSearchDialog extends AbstractTabDialog {
 			setMaterialList(utilDAO.getAllMaterialPresets(true));
 
 			// setting physician list
-			List<Physician> allPhysicians = physicianDAO.getPhysicians(ContactRole.values(), false);
+			List<Physician> allPhysicians = physicianDao.list(ContactRole.values(), false);
 			setAllPhysicians(allPhysicians.toArray(new Physician[allPhysicians.size()]));
 			setAllPhysicianTransformer(new DefaultTransformer<>(getAllPhysicians()));
 

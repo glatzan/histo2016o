@@ -338,7 +338,7 @@ public class Worklist {
 			if (!manuallyUdatePizes.isEmpty()) {
 				// updating patients in worklist which were not found by generic
 				// search
-				List<Patient> histoMatchList = patientDao.findList(manuallyUdatePizes);
+				List<Patient> histoMatchList = patientDao.list(manuallyUdatePizes);
 
 				for (Patient patient : histoMatchList) {
 					logger.trace("Upadtin Patient not in search query: " + patient.toString());

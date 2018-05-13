@@ -17,6 +17,7 @@ import org.histo.model.patient.Patient;
 import org.histo.service.dao.GenericDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.HibernateOptimisticLockingFailureException;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,9 +41,10 @@ import javax.persistence.criteria.Root;
  * 
  * @see SessionFactory
  */
-@Transactional
+
 @Getter
 @Setter
+@Transactional
 public class HibernateDao<E, K extends Serializable> implements GenericDao<E, K> {
 
 	protected static Logger logger = Logger.getLogger("org.histo");
@@ -160,6 +162,7 @@ public class HibernateDao<E, K extends Serializable> implements GenericDao<E, K>
 			currentSession().getTransaction().rollback();
 			// currentSession().beginTransaction();
 			logger.error("Error, rolling back!" + e);
+			e.printStackTrace();
 			throw new HistoDatabaseException(entity);
 		}
 	}

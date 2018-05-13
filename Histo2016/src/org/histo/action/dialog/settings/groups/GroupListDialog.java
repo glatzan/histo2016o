@@ -8,9 +8,10 @@ import org.histo.action.dialog.AbstractDialog;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
-import org.histo.dao.UserDAO;
 import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoPermissions;
+import org.histo.service.dao.GroupDao;
+import org.histo.service.dao.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -35,7 +36,7 @@ public class GroupListDialog extends AbstractDialog {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private UserDAO userDAO;
+	private GroupDao groupDao;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -82,7 +83,7 @@ public class GroupListDialog extends AbstractDialog {
 	}
 
 	public void updateData() {
-		setGroups(userDAO.getGroups(showArchived));
+		setGroups(groupDao.list(!showArchived));
 	}
 
 	public void onRowDblSelect() {
@@ -104,7 +105,7 @@ public class GroupListDialog extends AbstractDialog {
 	public void archive(HistoGroup group, boolean archive) {
 		try {
 			group.setArchived(archive);
-			userDAO.save(group, resourceBundle
+			groupDao.save(group, resourceBundle
 					.get(archive ? "log.settings.group.archived" : "log.settings.group.dearchived", group));
 		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();

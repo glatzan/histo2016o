@@ -88,11 +88,9 @@
 	<bean id="persistenceExceptionTranslationPostProcessor"
 		class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
 
-	<bean id="messageSource"
+	<bean id="messageSource" scope="singleton"
 		class="org.springframework.context.support.ResourceBundleMessageSource">
-		<!-- classpath*:/ -->
-		<property name="basenames" value="messages/messages">
-		</property>
+		<property name="basenames" value="messages/messages" />
 		<property name="defaultEncoding" value="UTF-8" />
 	</bean>
 

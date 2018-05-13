@@ -20,7 +20,6 @@ import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
-import org.histo.dao.PhysicianDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.Council;
@@ -28,6 +27,7 @@ import org.histo.model.ListItem;
 import org.histo.model.PDFContainer;
 import org.histo.model.Physician;
 import org.histo.model.patient.Task;
+import org.histo.service.dao.PhysicianDao;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.ui.documents.AbstractDocumentUi;
 import org.histo.template.ui.documents.CouncilReportUi;
@@ -51,7 +51,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private PhysicianDAO physicianDAO;
+	private PhysicianDao physicianDao;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -168,11 +168,11 @@ public class CouncilDialogHandler extends AbstractDialog {
 	 */
 	public void updatePhysicianLists() {
 		// list of physicians which are the counselors
-		setPhysicianCouncilList(physicianDAO.getPhysicians(ContactRole.CASE_CONFERENCE, false));
+		setPhysicianCouncilList(physicianDao.list(ContactRole.CASE_CONFERENCE, false));
 		setPhysicianCouncilTransformer(new DefaultTransformer<Physician>(getPhysicianCouncilList()));
 
 		// list of physicians to sign the request
-		setPhysicianSigantureList(physicianDAO.getPhysicians(ContactRole.SIGNATURE, false));
+		setPhysicianSigantureList(physicianDao.list(ContactRole.SIGNATURE, false));
 		setPhysicianSigantureListTransformer(new DefaultTransformer<Physician>(getPhysicianSigantureList()));
 	}
 

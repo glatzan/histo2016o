@@ -7,9 +7,10 @@ import org.histo.action.dialog.AbstractDialog;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
-import org.histo.dao.UserDAO;
 import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoUser;
+import org.histo.service.dao.GroupDao;
+import org.histo.service.dao.UserDao;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -35,7 +36,12 @@ public class UserListDialog extends AbstractDialog {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private UserDAO userDAO;
+	private UserDao userDao;
+	
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private GroupDao groupDao;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -80,8 +86,8 @@ public class UserListDialog extends AbstractDialog {
 	}
 
 	public void updateData() {
-		setUsers(userDAO.getUsers(showArchived));
-		setGroups(userDAO.getGroups(false));
+		setUsers(userDao.list(!showArchived));
+		setGroups(groupDao.list(true));
 		setGroupTransformer(new DefaultTransformer<HistoGroup>(getGroups()));
 	}
 
@@ -100,7 +106,7 @@ public class UserListDialog extends AbstractDialog {
 	public void archive(HistoUser user, boolean archive) {
 		try {
 			user.setArchived(archive);
-			userDAO.save(user,
+			userDao.save(user,
 					resourceBundle.get(archive ? "log.settings.user.archived" : "log.settings.user.dearchived", user));
 		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();

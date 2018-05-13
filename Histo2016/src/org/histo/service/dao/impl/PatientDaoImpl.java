@@ -124,8 +124,8 @@ public class PatientDaoImpl extends HibernateDao<Patient, Long> implements Patie
 	 *            List of patients ids.
 	 * @return Returns a list of patients containing the given ids
 	 */
-	public List<Patient> findList(List<Long> ids) {
-		return findList(ids, false, false, false);
+	public List<Patient> list(List<Long> ids) {
+		return list(ids, false, false, false);
 	}
 
 	/**
@@ -141,7 +141,7 @@ public class PatientDaoImpl extends HibernateDao<Patient, Long> implements Patie
 	 *            Archived Patiens won't be loaded.
 	 * @return Returns a list of patients containing the given ids
 	 */
-	public List<Patient> findList(List<Long> ids, boolean loadTasks, boolean loadFiles, boolean irgnoreArchived) {
+	public List<Patient> list(List<Long> ids, boolean loadTasks, boolean loadFiles, boolean irgnoreArchived) {
 		CriteriaQuery<Patient> criteria = getBuilder().createQuery(Patient.class);
 		Root<Patient> root = criteria.from(Patient.class);
 

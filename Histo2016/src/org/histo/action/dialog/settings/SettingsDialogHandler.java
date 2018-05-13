@@ -15,9 +15,6 @@ import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.LogDAO;
-import org.histo.dao.OrganizationDAO;
-import org.histo.dao.PhysicianDAO;
-import org.histo.dao.UserDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.DiagnosisPreset;
 import org.histo.model.ListItem;
@@ -31,6 +28,11 @@ import org.histo.model.log.Log;
 import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoUser;
 import org.histo.service.PhysicianService;
+import org.histo.service.UserService;
+import org.histo.service.dao.GroupDao;
+import org.histo.service.dao.OrganizationDao;
+import org.histo.service.dao.PhysicianDao;
+import org.histo.service.dao.UserDao;
 import org.histo.ui.ListChooser;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.primefaces.event.ReorderEvent;
@@ -57,8 +59,18 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private UserDAO userDAO;
-
+	private UserDao userDao;
+	
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private UserService userService;
+	
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private GroupDao groupDao;
+	
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
@@ -72,8 +84,13 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private PhysicianDAO physicianDAO;
+	private PhysicianDao physicianDao;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private PhysicianService physicianService;
+	
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
@@ -92,7 +109,7 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private OrganizationDAO organizationDAO;
+	private OrganizationDao organizationDao;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -103,11 +120,6 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private LogDAO logDAO;
-
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private PhysicianService physicianService;
 
 	private ProgramParentTab programParentTab;
 	private HistoUserTab histoUserTab;
@@ -207,8 +219,8 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 		}
 
 		public void updateData() {
-			setUsers(userDAO.getUsers(showArchived));
-			setGroups(userDAO.getGroups(false));
+			setUsers(userDao.list(!showArchived));
+			setGroups(groupDao.list(true));
 			setGroupTransformer(new DefaultTransformer<HistoGroup>(getGroups()));
 		}
 
@@ -223,7 +235,7 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 		public void addHistoUser(Physician physician) {
 			try {
 				if (physician != null) {
-					userDAO.addUser(physician);
+					userService.addUser(physician);
 					updateData();
 				}
 			} catch (HistoDatabaseInconsistentVersionException e) {
@@ -255,7 +267,7 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 		}
 
 		public void updateData() {
-			setGroups(userDAO.getGroups(showArchived));
+			setGroups(groupDao.list(!showArchived));
 		}
 
 	}
@@ -832,13 +844,13 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 
 		@Override
 		public void updateData() {
-			setPhysicianList(physicianDAO.getPhysicians(getShowPhysicianRoles(), showArchived));
+			setPhysicianList(physicianDao.list(getShowPhysicianRoles(), !showArchived));
 		}
 
 		public void addPhysician(Physician physician) {
 			try {
 				if (physician != null) {
-					physicianDAO.addOrMergePhysician(physician);
+					physicianService.addOrMergePhysician(physician);
 				}
 			} catch (HistoDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
@@ -853,7 +865,7 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 		 */
 		public void archivePhysician(Physician physician, boolean archive) {
 			try {
-				physicianDAO.archivePhysician(physician, archive);
+				physicianService.archivePhysician(physician, archive);
 			} catch (HistoDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
 			}
@@ -864,7 +876,7 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 		 */
 		public void updateDataFromLdap(Physician physician) {
 			try {
-				physicianService.updatePhysicianDataFromLdap(physician);
+				physicianService.ldapUpdate(physician);
 			} catch (HistoDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
 			}
@@ -897,7 +909,7 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 
 		@Override
 		public void updateData() {
-			setOrganizations(organizationDAO.getOrganizations(showArchived));
+			setOrganizations(organizationDao.list(!showArchived));
 		}
 
 	}

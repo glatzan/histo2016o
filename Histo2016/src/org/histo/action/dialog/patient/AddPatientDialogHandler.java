@@ -189,7 +189,7 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 						// 6to 7 digits of piz
 						// isSearchLocalDatabaseOnly() can be ignored because this function is only
 						// supported by local database
-						resultArr.addAll(patientService.findPatientListByPiz(getPatientPiz().replaceAll("_", "")));
+						resultArr.addAll(patientService.listByPiz(getPatientPiz().replaceAll("_", "")));
 					}
 
 				} else if ((getPatientName() != null && !getPatientName().isEmpty())
@@ -198,8 +198,8 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 
 					AtomicBoolean toManyEntries = new AtomicBoolean(false);
 
-					resultArr.addAll(patientService.findPatient(getPatientName(), getPatientSurname(),
-							getPatientBirthday(), isSearchLocalDatabaseOnly(), toManyEntries));
+					resultArr.addAll(patientService.list(getPatientName(), getPatientSurname(), getPatientBirthday(),
+							isSearchLocalDatabaseOnly(), toManyEntries));
 
 					setToManyMatchesInClinicDatabase(toManyEntries.get());
 					logger.debug(isToManyMatchesInClinicDatabase());

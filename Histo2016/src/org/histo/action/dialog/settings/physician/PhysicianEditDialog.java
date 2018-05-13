@@ -78,7 +78,7 @@ public class PhysicianEditDialog extends AbstractDialog implements OrganizationF
 	 */
 	public void updateDataFromLdap() {
 		try {
-			physicianService.updatePhysicianDataFromLdap(getPhysician());
+			physicianService.ldapUpdate(getPhysician());
 			updateOrganizationSelection();
 		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();

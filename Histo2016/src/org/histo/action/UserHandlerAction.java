@@ -11,11 +11,11 @@ import org.histo.adaptors.printer.ClinicPrinter;
 import org.histo.adaptors.printer.LabelPrinter;
 import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.GenericDAO;
-import org.histo.dao.UserDAO;
 import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoPermissions;
 import org.histo.model.user.HistoSettings;
 import org.histo.model.user.HistoUser;
+import org.histo.service.dao.GroupDao;
 import org.histo.template.mail.RequestUnlockMail;
 import org.histo.util.CopySettingsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +50,7 @@ public class UserHandlerAction implements Serializable {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private UserDAO userDAO;
+	private GroupDao groupDao;
 
 	/********************************************************
 	 * login
@@ -137,7 +137,7 @@ public class UserHandlerAction implements Serializable {
 	 */
 	public void groupOfUserHasChanged(HistoUser histoUser) throws HistoDatabaseInconsistentVersionException {
 		// init histo group
-		HistoGroup group = userDAO.initializeGroup(histoUser.getGroup(), true);
+		HistoGroup group = groupDao.initialize(histoUser.getGroup());
 
 		if (histoUser.getSettings() == null)
 			histoUser.setSettings(new HistoSettings());
@@ -186,7 +186,8 @@ public class UserHandlerAction implements Serializable {
 
 	public boolean updateSelectedDocumentPrinter() {
 
-		if (getCurrentUser().getSettings().isAutoSelectedPreferedPrinter() && !globalSettings.getProgramSettings().isOffline()) {
+		if (getCurrentUser().getSettings().isAutoSelectedPreferedPrinter()
+				&& !globalSettings.getProgramSettings().isOffline()) {
 			ClinicPrinter printer = globalSettings.getPrinterForRoomHandler().getPrinterForRoom();
 			if (printer != null) {
 				setSelectedPrinter(printer);

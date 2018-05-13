@@ -7,10 +7,11 @@ import org.histo.action.dialog.AbstractDialog;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.GenericDAO;
-import org.histo.dao.OrganizationDAO;
 import org.histo.model.Contact;
 import org.histo.model.Organization;
 import org.histo.model.Person;
+import org.histo.service.OrganizationService;
+import org.histo.service.dao.OrganizationDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -26,12 +27,12 @@ public class OrganizationEditDialog extends AbstractDialog {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private OrganizationDAO organizationDAO;
+	private OrganizationDao organizationDao;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private GenericDAO genericDAO;
+	private OrganizationService organizationService;
 
 	private Organization organization;
 
@@ -56,7 +57,7 @@ public class OrganizationEditDialog extends AbstractDialog {
 
 		if (organization.getId() != 0) {
 			try {
-				organizationDAO.initializeOrganization(organization);
+				organizationDao.initialize(organization);
 			} catch (HistoDatabaseInconsistentVersionException e) {
 				logger.debug("Version conflict, updating entity");
 				return false;
@@ -81,7 +82,7 @@ public class OrganizationEditDialog extends AbstractDialog {
 	 */
 	public void save() {
 		try {
-			organizationDAO.saveOrUpdateOrganization(organization);
+			organizationService.addOrganization(organization);
 
 			for (Person person : removeFromOrganization) {
 				genericDAO.save(person, "log.person.organization.remove", new Object[] { person, organization });
@@ -100,7 +101,7 @@ public class OrganizationEditDialog extends AbstractDialog {
 	 * @param organization
 	 */
 	public void removePersonFromOrganization(Person person, Organization organization) {
-		organizationDAO.removeOrganization(person, organization, false);
+		organizationService.removePerson(organization, person, false);
 		getRemoveFromOrganization().add(person);
 	}
 }

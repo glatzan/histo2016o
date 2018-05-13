@@ -8,13 +8,13 @@ import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.ContactDAO;
-import org.histo.dao.PhysicianDAO;
-import org.histo.dao.PhysicianDAO.PhysicianSortOrder;
 import org.histo.dao.TaskDAO;
 import org.histo.model.AssociatedContact;
 import org.histo.model.Physician;
 import org.histo.model.patient.Task;
 import org.histo.service.dao.PatientDao;
+import org.histo.service.dao.PhysicianDao;
+import org.histo.service.dao.PhysicianDao.PhysicianSortOrder;
 import org.histo.service.dao.impl.PatientDaoImpl;
 import org.histo.ui.selectors.PhysicianSelector;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,7 @@ public class ContactSelectDialog extends AbstractDialog {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private PhysicianDAO physicianDAO;
+	private PhysicianDao physicianDao;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -150,8 +150,7 @@ public class ContactSelectDialog extends AbstractDialog {
 	 * or other roles should be displayed)
 	 */
 	public void updateContactList() {
-		List<Physician> databasePhysicians = physicianDAO.getPhysicians(getShowRoles(), false,
-				PhysicianSortOrder.PRIORITY);
+		List<Physician> databasePhysicians = physicianDao.list(getShowRoles(), true, PhysicianSortOrder.PRIORITY);
 		setContactList(PhysicianSelector.factory(task, databasePhysicians));
 	}
 

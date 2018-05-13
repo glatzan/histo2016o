@@ -12,12 +12,13 @@ import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.View;
 import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
-import org.histo.dao.UserDAO;
 import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoGroup.AuthRole;
 import org.histo.model.user.HistoPermissions;
 import org.histo.model.user.HistoSettings;
 import org.histo.model.user.HistoUser;
+import org.histo.service.dao.GroupDao;
+import org.histo.service.dao.UserDao;
 import org.histo.util.CopySettingsUtil;
 import org.histo.worklist.search.WorklistSimpleSearch.SimpleSearchOption;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,12 @@ public class GroupEditDialog extends AbstractTabDialog {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private UserDAO userDAO;
+	private UserDao userDao;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private GroupDao groupDao;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -83,10 +89,10 @@ public class GroupEditDialog extends AbstractTabDialog {
 
 		if (initialize) {
 			try {
-				setGroup(userDAO.initializeGroup(group, true));
+				setGroup(groupDao.initialize(group));
 			} catch (HistoDatabaseInconsistentVersionException e) {
 				logger.debug("Version conflict, updating entity");
-				setGroup(userDAO.getHistoGroup(group.getId(), true));
+				setGroup(groupDao.find(group.getId(), true));
 			}
 		} else {
 			setGroup(group);
@@ -118,25 +124,24 @@ public class GroupEditDialog extends AbstractTabDialog {
 
 		try {
 			if (getGroup().getId() == 0) {
-				userDAO.save(getGroup(), resourceBundle.get("log.settings.group.new", getGroup()));
+				groupDao.save(getGroup(), resourceBundle.get("log.settings.group.new", getGroup()));
 			} else {
-				userDAO.save(getGroup(), resourceBundle.get("log.settings.group.edit", getGroup()));
+				groupDao.save(getGroup(), resourceBundle.get("log.settings.group.edit", getGroup()));
 
 				// updating user settings
-				List<HistoUser> usersOfGroup =userDAO.getUsersOfGroup(getGroup().getId());
+				List<HistoUser> usersOfGroup = userDao.findListByGroup(getGroup().getId());
 
 				for (HistoUser histoUser : usersOfGroup) {
 					CopySettingsUtil.copyUpdatedGroupSettings(histoUser, getGroup());
 					genericDAO.save(histoUser, "log.user.role.update", new Object[] { histoUser.getGroup() });
 				}
-				
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			onDatabaseVersionConflict();
 		}
-		
-		
+
 	}
 
 	@Getter

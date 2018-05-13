@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.config.enums.Dialog;
-import org.histo.dao.OrganizationDAO;
 import org.histo.model.Organization;
 import org.histo.model.Person;
+import org.histo.service.dao.OrganizationDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -17,7 +17,7 @@ import lombok.Setter;
 public class OrganizationListDialog extends AbstractDialog {
 
 	@Autowired
-	private OrganizationDAO organizationDAO;
+	private OrganizationDao organizationDao;
 
 	@Getter
 	@Setter
@@ -54,7 +54,7 @@ public class OrganizationListDialog extends AbstractDialog {
 
 	public void updateOrganizationList() {
 		setSelectedOrganization(null);
-		setOrganizations(organizationDAO.getOrganizations(false));
+		setOrganizations(organizationDao.list(true));
 	}
 
 	public void selectOrganisation() {
