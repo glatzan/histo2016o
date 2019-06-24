@@ -6,6 +6,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
 	xmlns:composite="http://java.sun.com/jsf/composite">
 
 <h:outputStylesheet name="histoNew.css" value="histoNew.css" />
@@ -35,7 +36,7 @@
 				style="white-space: nowrap;" styleClass="hugeFont" />
 		</h:panelGrid>
 
-		<p:media player="pdf"
+		<pe:documentViewer
 			rendered="#{cc.attrs.guiManager.renderPDF.get()}"
 			style="height:#{cc.attrs.height}; width: #{cc.attrs.width}"
 			value="#{cc.attrs.pdfContent}" />

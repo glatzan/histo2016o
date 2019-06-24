@@ -70,8 +70,10 @@ public class LoginHandler {
 
 			// deleting password
 			this.password = null;
+			String target = determineTargetUrl(authentication) ;//+ "?faces-redirect=true";
+			System.out.println(target);
 
-			return determineTargetUrl(authentication) + "?faces-redirect=true";
+			return target;
 		} catch (BadCredentialsException ex) {
 
 			mainHandlerAction.sendGrowlMessages(resourceBundle.get("login.error"), ex.getMessage(),

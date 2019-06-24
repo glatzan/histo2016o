@@ -100,7 +100,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 				logger.info("Physician found " + physician.getPerson().getFullName());
 
 				// if no error was thrown auth was successful
-				//ladpHandler.checkPassword(dn, password);
+				ladpHandler.checkPassword(dn, password);
 
 				logger.info("Login successful " + physician.getPerson().getFullName());
 

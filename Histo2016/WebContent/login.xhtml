@@ -66,8 +66,8 @@
 					style="margin-top:20px;" columns="1"
 					columnClasses="columnHorTextcenter">
 
-					<p:commandButton id="login" widgetVar="submitBTn" type="submit"
-						onstart="blockForLogin(true);"
+					<h:commandButton id="login" widgetVar="submitBTn" type="submit"
+						onclick="blockForLogin(true); alert()"
 						value="#{msg['login.user.button.login']}" style="width:75%"
 						action="#{loginHandler.login()}" />
 
@@ -79,8 +79,6 @@
 			<p:graphicImage value="/resources/gfx/ajax-loader1.gif"
 				id="loadingGif" />
 		</pe:blockUI>
-<p:commandButton value="assd"
-						actionListener="#{mainHandlerAction.test()}" />
 
 	</h:form>
 
