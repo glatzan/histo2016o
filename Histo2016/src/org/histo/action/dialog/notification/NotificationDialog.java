@@ -27,8 +27,6 @@ import org.histo.model.patient.Task;
 import org.histo.service.NotificationService;
 import org.histo.service.TaskService;
 import org.histo.service.dao.PatientDao;
-import org.histo.service.dao.impl.PatientDaoImpl;
-import org.histo.service.impl.PDFServiceImpl;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.MailTemplate;
 import org.histo.template.documents.DiagnosisReport;
@@ -67,11 +65,6 @@ public class NotificationDialog extends AbstractTabDialog {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private TaskDAO taskDAO;
-
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private PDFServiceImpl pdfService;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)

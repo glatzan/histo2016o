@@ -117,24 +117,30 @@ public class ClinicPrinter extends AbstractPrinter {
 		int i = 0;
 		boolean result = true;
 		logger.debug("Printing " + i);
+		logger.debug("Printing to printer " + settings.getCupsHost());
+		
 		CupsClient cupsClient;
 		try {
 			cupsClient = new CupsClient(settings.getCupsHost(), settings.getCupsPost());
 			CupsPrinter printer = cupsClient.getPrinter(new URL(address));
 
 			// adding additional page if duplex print an odd pages are provided
-			if (PDFGenerator.countPDFPages(printOrder.getPdfContainer()) % 2 != 0 && printOrder.isDuplex()) {
-				byte[] arr = FileUtil.getFileAsBinary(defaultDocuments.getEmptyPage());
+//			if (PDFGenerator.countPDFPages(printOrder.getPdfContainer()) % 2 != 0 && printOrder.isDuplex()) {
+//				byte[] arr = FileUtil.getFileAsBinary(defaultDocuments.getEmptyPage());
+//
+//				PDFContainer cont = PDFGenerator.mergePdfs(
+//						Arrays.asList(printOrder.getPdfContainer(), new PDFContainer(DocumentType.EMPTY, arr)), "",
+//						DocumentType.PRINT_DOCUMENT);
+//
+//				
+//				printOrder.setPdfContainer(cont);
+//				
+//				logger.debug("Printing in duplex mode, adding empty page at the end");
+//			}
 
-				PDFContainer cont = PDFGenerator.mergePdfs(
-						Arrays.asList(printOrder.getPdfContainer(), new PDFContainer(DocumentType.EMPTY, arr)), "",
-						DocumentType.PRINT_DOCUMENT);
-
-				printOrder.setPdfContainer(cont);
-				
-				logger.debug("Printing in duplex mode, adding empty page at the end");
-			}
-
+			System.out.println(printOrder.getPdfContainer());
+			System.out.println(printOrder.getPdfContainer().getData().length);
+			
 			PrintJob printJob = new PrintJob.Builder(new ByteArrayInputStream(printOrder.getPdfContainer().getData()))
 					.duplex(printOrder.isDuplex()).copies(printOrder.getCopies()).build();
 

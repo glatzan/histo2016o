@@ -129,6 +129,9 @@ Graphic Changes
 
 https://tex.stackexchange.com/questions/344799/how-can-i-escape-plain-text
 
++v 1.5.5 (25.06.2019)
+++++: Einige Bugfixes
+
 +v 1.5.4 (10.05.2018)
 ++++: Favouriten-Listen kategorien
 

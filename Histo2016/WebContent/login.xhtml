@@ -27,10 +27,10 @@
 		<script type="text/javascript">
 			function blockForLogin(block) {
 				if (block) {
-					PF('submitBTn').disable();
+					//PF('submitBTn').disable();
 					PF('blockLoginTable').block();
 				} else {
-					PF('submitBTn').enable();
+					//PF('submitBTn').enable();
 					PF('blockLoginTable').unblock();
 				}
 			}
@@ -66,8 +66,8 @@
 					style="margin-top:20px;" columns="1"
 					columnClasses="columnHorTextcenter">
 
-					<h:commandButton id="login" widgetVar="submitBTn" type="submit"
-						onclick="blockForLogin(true); alert()"
+					<h:commandButton id="login" widgetVar="submitBTn" 
+					onclick="setTimeout(blockForLogin(true), 50);" 
 						value="#{msg['login.user.button.login']}" style="width:75%"
 						action="#{loginHandler.login()}" />
 

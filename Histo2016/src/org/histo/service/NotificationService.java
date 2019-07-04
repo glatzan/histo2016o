@@ -73,7 +73,7 @@ public class NotificationService {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private PDFServiceImpl pdfService;
+	private PDFService pdfService;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -139,7 +139,9 @@ public class NotificationService {
 
 		if (printContainerList.isUse() && printContainerList.getDefaultReport() != null) {
 			// addition templates
-			((DiagnosisReport) printContainerList.getDefaultReport()).initData(task, "");
+
+			((DiagnosisReport) printContainerList.getDefaultReport()).initData(task,
+					printContainerList.getSelectedRevisions(), "");
 			PDFContainer report = (new PDFGenerator())
 					.getPDF(((DiagnosisReport) printContainerList.getDefaultReport()));
 
