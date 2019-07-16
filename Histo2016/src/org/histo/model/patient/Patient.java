@@ -1,5 +1,6 @@
 package org.histo.model.patient;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -54,7 +55,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Patient implements Parent<Patient>, CreationDate, LogAble, ArchivAble, PatientRollbackAble<Patient>,
-		HasDataList, HasID {
+		HasDataList, HasID, Serializable{
 
 	@Id
 	@GeneratedValue(generator = "patient_sequencegenerator")

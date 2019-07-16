@@ -130,10 +130,9 @@
 				<h:outputText value="#{patientList.listItem.piz}" />
 			</p:column>
 
-			<p:ajax event="rowSelect" update="adminForm:buttonContainer" />
+			<p:ajax event="rowSelect" update="adminForm:buttonContainer" process="@form" />
 
-
-			<p:ajax event="rowDblselect"
+			<p:ajax event="rowDblselect" process="@form"
 				oncomplete="sumbitOnDblSelect();return false;" />
 
 		</p:dataTable>

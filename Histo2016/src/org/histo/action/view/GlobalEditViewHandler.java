@@ -487,6 +487,7 @@ public class GlobalEditViewHandler {
 	 * Adds an external or clinic patient to the database
 	 */
 	public void onAddClinicPatient(SelectEvent event) {
+		logger.debug("Adding patient to database");
 		if (event.getObject() != null && event.getObject() instanceof Patient) {
 			try {
 				logger.debug("Adding patient to database");
